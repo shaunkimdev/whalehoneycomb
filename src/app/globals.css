@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  /* 토스증권 벤치마크 디자인 토큰 */
+  --color-canvas: #f2f4f6; /* 페이지 배경 */
+  --color-card: #ffffff; /* 카드 배경 */
+  --color-primary: #3182f6; /* 토스 블루 */
+  --color-primary-soft: #e8f3ff;
+  --color-up: #f04452; /* 상승(빨강, 국내 관례) */
+  --color-up-soft: #fdedee;
+  --color-down: #3182f6; /* 하락(파랑) */
+  --color-down-soft: #e8f3ff;
+  --color-ink: #191f28; /* 본문 텍스트 */
+  --color-ink-2: #4e5968; /* 보조 텍스트 */
+  --color-muted: #8b95a1; /* 옅은 라벨 */
+  --color-line: #e5e8eb; /* 구분선 */
+  --color-fill: #f9fafb; /* 옅은 채움(행 hover 등) */
+  --color-gold: #f5b800;
+
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, "Segoe UI", "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", sans-serif;
+
+  --radius-card: 20px;
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 숫자 정렬용 */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* 스크롤바 없는 가로 스크롤(모바일 카드 캐러셀) */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

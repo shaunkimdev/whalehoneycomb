@@ -1,0 +1,54 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # 매일 05:30 UTC (한국 14:30) — EDGAR 데이터 재수집 후 재배포
+    - cron: "30 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: EDGAR 데이터 수집 (실패해도 저장된 데이터로 빌드)
+        run: node scripts/ingest.mjs
+        continue-on-error: true
+        timeout-minutes: 15
+
+      - name: 정적 빌드 (서버 API 라우트 제외)
+        env:
+          PAGES_BUILD: "1"
+          NEXT_PUBLIC_STATIC: "1"
+        run: |
+          rm -rf src/app/api
+          npx next build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
