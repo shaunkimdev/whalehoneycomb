@@ -19,7 +19,6 @@ const nextConfig: NextConfig = {
   ...(isPagesBuild
     ? {
         output: "export" as const,
-        basePath: "/whalehoneycomb",
       }
     : {}),
 };
