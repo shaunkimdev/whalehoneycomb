@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { BottomTabBar, TopNav } from "@/components/Nav";
 import { getDataMeta } from "@/lib/repository";
@@ -17,6 +18,20 @@ export default function RootLayout({
   return (
     <html lang="ko" className="h-full antialiased">
       <head>
+        <Script
+          async
+          strategy="beforeInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=AW-480437908"
+        />
+        <Script id="google-tag" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'AW-480437908');
+          `}
+        </Script>
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"

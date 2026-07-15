@@ -1,0 +1,33 @@
+웨일허니콤 업데이트 주기 (2026-07-06 기준)
+=====================================
+
+1. 배포 사이트 전체 (https://shaunkimdev.github.io/whalehoneycomb/)
+   - main 브랜치에 push할 때마다 즉시 재빌드·재배포
+   - 매일 05:30 UTC(한국시간 14:30)에 자동 재배포 (GitHub Actions cron)
+   - 필요 시 수동 실행 가능 (workflow_dispatch)
+   근거: .github/workflows/pages.yml
+
+2. SEC EDGAR 공시 데이터 (13F / Form 4 / 13D·G)
+   - 위 배포 사이클과 동일한 주기로 재수집 (1일 1회 자동 + push 시 추가 수집)
+   - 재배포마다 scripts/ingest.mjs가 EDGAR에서 새로 수집 후 반영
+   - 수집 실패해도 이전에 저장된 데이터로 빌드는 계속 진행됨
+
+3. 실시간 주가 (src/lib/quotes.ts)
+   - 코드상 캐시 주기는 60초(revalidate)이지만, 이는 Node 서버가 살아있을 때만
+     동작하는 기능임
+   - 현재 배포 방식은 정적 export(GitHub Pages)라서 서버가 없고, 주가는
+     "빌드 시점"에 1회 고정되어 굳어짐 → 실질 갱신 주기는 1번 항목과 동일(1일)
+   - npm run dev / npm run start로 직접 서버를 띄워서 볼 때만 60초 단위로
+     실시간 갱신됨
+
+4. 신규 공시 알림 워처 (scripts/watch-filings.mjs)
+   - 기본 5분 간격으로 새 공시를 확인해 Web Push / Gmail 알림 발송
+   - GitHub Actions에는 포함되어 있지 않음 → 자동 실행되지 않음
+   - npm run watch:filings 로 로컬 PC나 별도 서버에서 직접 실행해야만 동작
+
+5. CUSIP→티커 매핑 (cusipMap.json)
+   - ingest 실행 시마다 갱신 시도하지만, 이미 매핑된 종목은 캐시를 재사용
+   - 신규 종목이 나올 때만 OpenFIGI에 새로 조회
+
+요약: 지금 상태로는 "1일 1회 자동 갱신"이 기본이고, 실시간에 가까운 갱신(주가
+60초, 알림 5분)은 로컬/서버에서 직접 프로세스를 켜둬야만 작동합니다.
